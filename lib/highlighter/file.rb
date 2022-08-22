@@ -41,7 +41,7 @@ module Highlighter
                                           'Authorization': "Token #{Highlighter::Client.api_token}" })
       end
 
-      def self.upload_to_s3(file:, filename:, mime_type:)
+      def self.upload_to_s3(file:, filename:, content_type:)
         presigned_url = get_presigned_url(filename: filename)
         raise "Error getting presigned url from Highlighter - #{presigned_url.code}" unless presigned_url.success?
 
@@ -53,7 +53,7 @@ module Highlighter
 
         response = HTTParty.post(url, body: fields,
                                  timeout: Highlighter::Client.http_timeout,
-                                      headers: { 'content-type': mime_type })
+                                      headers: { 'content-type': content_type })
         if response.success?
           {
             id: presigned_url['data']['presignedUrl']['key'],
@@ -64,15 +64,13 @@ module Highlighter
         end
       end
 
-      def self.upload_and_create(data_source_id:, file:, filename:, content_type:, mime_type:)
-        store = upload_to_s3(file: file, filename: filename, mime_type: mime_type)
+      def self.upload_and_create(data_source_id:, file:, filename:, content_type:)
+        store = upload_to_s3(file: file, filename: filename, content_type: content_type)
 
         result = create(data_source_id: data_source_id, original_source_url: filename,
                         file_data_id: store[:id],
                         file_data_storage: store[:storage],
-                        file_size: file.length,
-                        mime_type: mime_type,
-                        content_type: content_type)
+                        file_size: file.length)
 
         if result.success?
           return new(id: result['data']['createImage'].dig('image','id'),
@@ -85,21 +83,19 @@ module Highlighter
         end
       end
 
-      def self.create(data_source_id:, original_source_url:, file_data_id:, file_data_storage:, file_size:, mime_type:, content_type:)
+      def self.create(data_source_id:, original_source_url:, file_data_id:, file_data_storage:, file_size:)
         query_string = <<-GRAPHQL
             mutation {
               createImage(
                 dataSourceId: #{data_source_id},
                 originalSourceUrl: "#{original_source_url}",
-                mimeType: "#{mime_type}",
-                contentType: "#{content_type}",
                 fileData: {
                   id: "#{file_data_id}",
                   storage: "#{file_data_storage}",
                   metadata: {
                     size: #{file_size},
                     filename: "#{original_source_url}",
-                    mimeType: "#{mime_type}",
+                    mimeType: "application/json",
                   }
                 }
               ) {
