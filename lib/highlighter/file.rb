@@ -64,10 +64,10 @@ module Highlighter
         end
       end
 
-      def self.upload_and_create(file:, filename:, content_type:)
+      def self.upload_and_create(data_source_id:, file:, filename:, content_type:)
         store = upload_to_s3(file: file, filename: filename, content_type: content_type)
 
-        result = create(data_source_id: 2386, original_source_url: filename,
+        result = create(data_source_id: data_source_id, original_source_url: filename,
                         file_data_id: store[:id],
                         file_data_storage: store[:storage],
                         file_size: file.length)
