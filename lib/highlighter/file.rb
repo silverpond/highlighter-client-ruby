@@ -91,6 +91,7 @@ module Highlighter
               createImage(
                 dataSourceId: #{data_source_id},
                 originalSourceUrl: "#{original_source_url}",
+                mimeType: "#{mime_type}",
                 contentType: "#{content_type}",
                 fileData: {
                   id: "#{file_data_id}",
