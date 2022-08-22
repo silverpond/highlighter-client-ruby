@@ -70,7 +70,8 @@ module Highlighter
         result = create(data_source_id: data_source_id, original_source_url: filename,
                         file_data_id: store[:id],
                         file_data_storage: store[:storage],
-                        file_size: file.length)
+                        file_size: file.length,
+                        mime_type: content_type)
 
         if result.success?
           return new(id: result['data']['createImage'].dig('image','id'),
@@ -83,7 +84,7 @@ module Highlighter
         end
       end
 
-      def self.create(data_source_id:, original_source_url:, file_data_id:, file_data_storage:, file_size:)
+      def self.create(data_source_id:, original_source_url:, file_data_id:, file_data_storage:, file_size:, mime_type:)
         query_string = <<-GRAPHQL
             mutation {
               createImage(
@@ -95,7 +96,7 @@ module Highlighter
                   metadata: {
                     size: #{file_size},
                     filename: "#{original_source_url}",
-                    mimeType: "application/json",
+                    mimeType: "#{mime_type}",
                   }
                 }
               ) {
