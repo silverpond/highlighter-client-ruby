@@ -132,7 +132,7 @@ module Highlighter
                      task_submission_json: result['data'].dig('task','submission'),
                      submission: submission)
         else
-          raise "Error registering file in Highlighter - #{result.code}"
+          raise "Error finding task in Highlighter - #{result.code}"
         end
       end
     end
