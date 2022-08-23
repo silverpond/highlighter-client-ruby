@@ -21,8 +21,8 @@ module Highlighter
         return nil if data.nil?
 
         eavs = []
-        if !data['entity_attribute_values'].nil?
-          data['entity_attribute_values'].each do |d|
+        if !data['entityAttributeValues'].nil?
+          data['entityAttributeValues'].each do |d|
             eavs << EntityAttributeValue.new(id: d.dig('id'),
                       occurred_at: d.dig('occurredAt'),
                       entity_id: d.dig('entityId'),
