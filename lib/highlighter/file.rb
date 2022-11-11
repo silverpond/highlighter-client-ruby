@@ -64,14 +64,15 @@ module Highlighter
         end
       end
 
-      def self.upload_and_create(data_source_id:, file:, filename:, content_type:)
+      def self.upload_and_create(data_source_id:, file:, filename:, content_type:, metadata: {})
         store = upload_to_s3(file: file, filename: filename, content_type: content_type)
 
         result = create(data_source_id: data_source_id, original_source_url: filename,
                         file_data_id: store[:id],
                         file_data_storage: store[:storage],
                         file_size: file.length,
-                        mime_type: content_type)
+                        mime_type: content_type,
+                        metadata: metadata)
 
         if result.success?
           return new(id: result['data']['createImage'].dig('image','id'),
@@ -84,12 +85,16 @@ module Highlighter
         end
       end
 
-      def self.create(data_source_id:, original_source_url:, file_data_id:, file_data_storage:, file_size:, mime_type:)
+      def self.create(data_source_id:, original_source_url:, file_data_id:, file_data_storage:, file_size:, mime_type:, metadata: {})
+
+        metadata_mutation = metadata.map{|k,v| "#{k}: \"#{v}\""}.join(",")
+
         query_string = <<-GRAPHQL
             mutation {
               createImage(
                 dataSourceId: #{data_source_id},
                 originalSourceUrl: "#{original_source_url}",
+                metadata: { #{metadata_mutation} },
                 fileData: {
                   id: "#{file_data_id}",
                   storage: "#{file_data_storage}",
