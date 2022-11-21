@@ -60,7 +60,7 @@ module Highlighter
             storage: presigned_url['data']['presignedUrl']['storage']
           }
         else
-          raise "Error uploading file to Highlighter - #{reponse.code}"
+          raise "Error uploading file to Highlighter - #{response.code}"
         end
       end
 
