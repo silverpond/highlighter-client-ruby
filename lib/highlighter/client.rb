@@ -28,5 +28,6 @@ module Highlighter
 end
 
 require_relative 'file'
+require_relative 'project_order'
 require_relative 'task'
 require_relative 'submission'

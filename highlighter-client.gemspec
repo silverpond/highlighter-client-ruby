@@ -16,6 +16,7 @@ Gem::Specification.new do |spec|
   spec.files = ['lib/highlighter/client.rb',
                 'lib/highlighter/version.rb',
                 'lib/highlighter/file.rb',
+                'lib/highlighter/project_order.rb',
                 'lib/highlighter/task.rb',
                 'lib/highlighter/submission.rb']
 end
