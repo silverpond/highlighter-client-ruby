@@ -29,6 +29,7 @@ module Highlighter
             }
             errors
           }
+        }
         GRAPHQL
 
         # request_url = "https://art-processors.highlighter.ai/graphql"
@@ -40,18 +41,16 @@ module Highlighter
                                  'Authorization': "Token #{Highlighter::Client.api_token}" })
         data = result.dig('data', 'addFilesToProjectOrder')
         if result.success? && data.present?
-          if data['errors'].blank?
-            return new(id: data.dig('projectOrder','id'),
-                       name: data.dig('projectOrder','name'),
-                       filterOriginalSourceUrl: data.dig('projectOrder','filterOriginalSourceUrl'),
-                       locked: data.dig('projectOrder','locked'),
-                       projectId: data.dig('projectOrder', 'projectId'),
-                       requestedById: data.dig('projectOrder', 'requestedById'),
-                       state: data.dig('projectOrder', 'state'),
-                       )
-          else
-            raise "Error adding files to project order #{project_order_id} in Highlighter - #{data['errors']}"
-          end
+          return new(id: data.dig('projectOrder','id'),
+                     name: data.dig('projectOrder','name'),
+                     filterOriginalSourceUrl: data.dig('projectOrder','filterOriginalSourceUrl'),
+                     locked: data.dig('projectOrder','locked'),
+                     projectId: data.dig('projectOrder', 'projectId'),
+                     requestedById: data.dig('projectOrder', 'requestedById'),
+                     state: data.dig('projectOrder', 'state'),
+                     )
+        elsif result.success? && result['errors'].present?
+          raise "Error adding files to project order #{project_order_id} in Highlighter - #{result['errors']}"
         else
           raise "Error adding files to project order #{project_order_id} in Highlighter - #{result.code} - #{data}"
         end
