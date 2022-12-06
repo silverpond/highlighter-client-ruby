@@ -3,29 +3,31 @@
 module Highlighter
   module Client
     class ProjectOrder
-      attr_accessor :id, :name, :filterOriginalSourceUrl, :locked, :projectId, :requestedById, :state
-      def initialize(id:, name:, filterOriginalSourceUrl:, locked:, projectId:, requestedById:, state:)
+      attr_accessor :id, :projectId, :projectOrderId, :imageId, :state, :createdAt, :updatedAt, :completedAt
+      def initialize(id:, projectId:, projectOrderId:, imageId:, state:, createdAt:, updatedAt:, completedAt:)
         @id = id
-        @name = name
-        @filterOriginalSourceUrl = filterOriginalSourceUrl
-        @locked = locked
         @projectId = projectId
-        @requestedById = requestedById
+        @projectOrderId = projectOrderId
+        @imageId = imageId
         @state = state
+        @createdAt = createdAt
+        @updatedAt = updatedAt
+        @completedAt = completedAt
       end
 
       def self.add_files(project_order_id:, file_ids: [])
         query_string = <<-GRAPHQL
         mutation {
           addFilesToProjectOrder(projectOrderId: "#{project_order_id}", fileIds: [#{file_ids.join(',')}]) {
-            projectOrder {
+            projectImages {
               id
-              name
-              filterOriginalSourceUrl
-              locked
               projectId
-              requestedById
+              projectOrderId
+              imageId
               state
+              createdAt
+              updatedAt
+              completedAt
             }
             errors
           }
@@ -41,14 +43,22 @@ module Highlighter
                                  'Authorization': "Token #{Highlighter::Client.api_token}" })
         data = result.dig('data', 'addFilesToProjectOrder')
         if result.success? && data.present?
-          return new(id: data.dig('projectOrder','id'),
-                     name: data.dig('projectOrder','name'),
-                     filterOriginalSourceUrl: data.dig('projectOrder','filterOriginalSourceUrl'),
-                     locked: data.dig('projectOrder','locked'),
-                     projectId: data.dig('projectOrder', 'projectId'),
-                     requestedById: data.dig('projectOrder', 'requestedById'),
-                     state: data.dig('projectOrder', 'state'),
-                     )
+          if data['projectImages'].present?
+            return data['projectImages'].map do |d|
+              new(
+                id: d.dig('id'),
+                projectId: d.dig('projectId'),
+                projectOrderId: d.dig('projectOrderId'),
+                imageId: d.dig('imageId'),
+                state: d.dig('state'),
+                createdAt: d.dig('createdAt'),
+                updatedAt: d.dig('updatedAt'),
+                completedAt: d.dig('completedAt'),
+              )
+            end
+          else
+            raise "Error adding files to project order #{project_order_id} in Highlighter - Missing Project Images - #{data}"
+          end
         elsif result.success? && result['errors'].present?
           raise "Error adding files to project order #{project_order_id} in Highlighter - #{result['errors']}"
         else
