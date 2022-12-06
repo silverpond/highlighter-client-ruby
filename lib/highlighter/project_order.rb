@@ -3,16 +3,16 @@
 module Highlighter
   module Client
     class ProjectOrder
-      attr_accessor :id, :projectId, :projectOrderId, :imageId, :state, :createdAt, :updatedAt, :completedAt
-      def initialize(id:, projectId:, projectOrderId:, imageId:, state:, createdAt:, updatedAt:, completedAt:)
+      attr_accessor :id, :project_id, :project_order_id, :image_id, :state, :created_at, :updated_at, :completed_at
+      def initialize(id:, project_id:, project_order_id:, image_id:, state:, created_at:, updated_at:, completed_at:)
         @id = id
-        @projectId = projectId
-        @projectOrderId = projectOrderId
-        @imageId = imageId
+        @project_id = project_id
+        @project_order_id = project_order_id
+        @image_id = image_id
         @state = state
-        @createdAt = createdAt
-        @updatedAt = updatedAt
-        @completedAt = completedAt
+        @created_at = created_at
+        @updated_at = updated_at
+        @completed_at = completed_at
       end
 
       def self.add_files(project_order_id:, file_ids: [])
@@ -47,13 +47,13 @@ module Highlighter
             return data['projectImages'].map do |d|
               new(
                 id: d.dig('id'),
-                projectId: d.dig('projectId'),
-                projectOrderId: d.dig('projectOrderId'),
-                imageId: d.dig('imageId'),
+                project_id: d.dig('projectId'),
+                project_order_id: d.dig('projectOrderId'),
+                image_id: d.dig('imageId'),
                 state: d.dig('state'),
-                createdAt: d.dig('createdAt'),
-                updatedAt: d.dig('updatedAt'),
-                completedAt: d.dig('completedAt'),
+                created_at: d.dig('createdAt'),
+                updated_at: d.dig('updatedAt'),
+                completed_at: d.dig('completedAt'),
               )
             end
           else
