@@ -3,12 +3,12 @@
 module Highlighter
   module Client
     class Submission
-      attr_accessor :id, :image_id, :started_at, :created_at, :updated_at, :user_id, :status,
+      attr_accessor :id, :file_id, :started_at, :created_at, :updated_at, :user_id, :status,
                     :annotations, :entity_attribute_values, :entities
-      def initialize(id:, image_id:, started_at:, created_at:, updated_at:, user_id:, status:,
+      def initialize(id:, file_id:, started_at:, created_at:, updated_at:, user_id:, status:,
                      annotations:, entity_attribute_values:)
         @id = id
-        @image_id = image_id
+        @file_id = file_id
         @started_at = started_at
         @created_at = created_at
         @updated_at = updated_at
@@ -91,7 +91,7 @@ module Highlighter
           end
         end
         Submission.new(id: data['id'],
-                      image_id: data.dig('imageId'),
+                      file_id: data.dig('imageId'),
                       started_at: data.dig('startedAt'),
                       created_at: data.dig('createdAt'),
                       updated_at: data.dig('updatedAt'),

@@ -3,10 +3,10 @@
 module Highlighter
   module Client
     class ProjectFile
-      attr_accessor :id, :image_id, :project_id, :project_order_id, :state, :completed_at, :created_at, :updated_at, :latest_submission, :latest_submission_json
-      def initialize(id:, image_id:, project_id:, project_order_id:, state:, completed_at:, created_at:, updated_at:, latest_submission:, latest_submission_json:)
+      attr_accessor :id, :file_id, :project_id, :project_order_id, :state, :completed_at, :created_at, :updated_at, :latest_submission, :latest_submission_json
+      def initialize(id:, file_id:, project_id:, project_order_id:, state:, completed_at:, created_at:, updated_at:, latest_submission:, latest_submission_json:)
         @id = id
-        @image_id = image_id
+        @file_id = file_id
         @project_id = project_id
         @project_order_id = project_order_id
         @state = state
@@ -94,7 +94,7 @@ module Highlighter
         if result.success?
           submission = Highlighter::Client::Submission.from_json(data: result['data'].dig('projectImage', 'latestSubmission'))
           return new(id: result['data'].dig('projectImage', 'id'),
-                     image_id: result['data'].dig('projectImage','image','id'),
+                     file_id: result['data'].dig('projectImage','image','id'),
                      project_id: result['data'].dig('projectImage','projectId'),
                      project_order_id: result['data'].dig('projectImage','projectOrderId'),
                      state: result['data'].dig('projectImage','state'),
