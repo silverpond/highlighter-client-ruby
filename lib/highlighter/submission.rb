@@ -35,19 +35,28 @@ module Highlighter
         end
         @entity_attribute_values.sort_by{|eav| eav.occurred_at}.each do |eavt|
           entity = @entities[eavt.entity_id]
-          if entity.present?
-            case eavt.entity_attribute_value_type
-            when 'entity'
-              if @entities[eavt.related_entity_id].nil?
-                entity.fields[eavt.entity_attribute_name] = eavt.related_entity_id
-              else
-                entity.fields[eavt.entity_attribute_name] = @entities[eavt.related_entity_id]
-              end
-            when 'enum'
-              entity.fields[eavt.entity_attribute_name] = eavt.entity_attribute_enum_value
+          if !entity.present?
+            entity = Entity.new(
+              id: eavt.entity_id,
+              name: eavt.entity_name,
+              object_class_name: '',
+              external_id: eavt.entity_external_id,
+              external_id_type: eavt.entity_external_id_type,
+            )
+            @entities[eavt.entity_id] = entity
+          end
+
+          case eavt.entity_attribute_value_type
+          when 'entity'
+            if @entities[eavt.related_entity_id].nil?
+              entity.fields[eavt.entity_attribute_name] = eavt.related_entity_id
             else
-              entity.fields[eavt.entity_attribute_name] = eavt.value
+              entity.fields[eavt.entity_attribute_name] = @entities[eavt.related_entity_id]
             end
+          when 'enum'
+            entity.fields[eavt.entity_attribute_name] = eavt.entity_attribute_enum_value
+          else
+            entity.fields[eavt.entity_attribute_name] = eavt.value
           end
         end
       end

@@ -2,6 +2,6 @@
 
 module Highlighter
   module Client
-    VERSION = '0.3.14'
+    VERSION = '0.3.17'
   end
 end
