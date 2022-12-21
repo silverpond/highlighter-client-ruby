@@ -104,7 +104,7 @@ module Highlighter
                      latest_submission_json: result['data'].dig('projectImage','latestSubmission'),
                      latest_submission: submission)
         else
-          raise "Error finding task in Highlighter - #{result.code}"
+          raise "Error finding project file in Highlighter - #{result.code}"
         end
       end
     end
