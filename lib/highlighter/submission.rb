@@ -35,17 +35,19 @@ module Highlighter
         end
         @entity_attribute_values.sort_by{|eav| eav.occurred_at}.each do |eavt|
           entity = @entities[eavt.entity_id]
-          case eavt.entity_attribute_value_type
-          when 'entity'
-            if @entities[eavt.related_entity_id].nil?
-              entity.fields[eavt.entity_attribute_name] = eavt.related_entity_id
+          if entity.present?
+            case eavt.entity_attribute_value_type
+            when 'entity'
+              if @entities[eavt.related_entity_id].nil?
+                entity.fields[eavt.entity_attribute_name] = eavt.related_entity_id
+              else
+                entity.fields[eavt.entity_attribute_name] = @entities[eavt.related_entity_id]
+              end
+            when 'enum'
+              entity.fields[eavt.entity_attribute_name] = eavt.entity_attribute_enum_value
             else
-              entity.fields[eavt.entity_attribute_name] = @entities[eavt.related_entity_id]
+              entity.fields[eavt.entity_attribute_name] = eavt.value
             end
-          when 'enum'
-            entity.fields[eavt.entity_attribute_name] = eavt.entity_attribute_enum_value
-          else
-            entity.fields[eavt.entity_attribute_name] = eavt.value
           end
         end
       end
