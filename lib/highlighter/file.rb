@@ -75,6 +75,9 @@ module Highlighter
                         metadata: metadata)
 
         if result.success?
+          if result['data'].nil? || result['data']['createImage'].nil?
+            raise "Error in response: #{result}"
+          end
           return new(id: result['data']['createImage'].dig('image','id'),
                      original_source_url: result['data']['createImage'].dig('image','originalSourceUrl'),
                      data_source_id: result['data']['createImage'].dig('image','dataSourceId'),
