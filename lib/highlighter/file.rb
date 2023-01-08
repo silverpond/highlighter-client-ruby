@@ -90,7 +90,7 @@ module Highlighter
 
       def self.create(data_source_id:, original_source_url:, file_data_id:, file_data_storage:, file_size:, mime_type:, metadata: {})
 
-        metadata_mutation = metadata.map{|k,v| "#{k}: \"#{v}\""}.join(",")
+        metadata_mutation = metadata.map{|k,v| "#{k}: #{v.to_json}"}.join(",")
 
         query_string = <<-GRAPHQL
             mutation {
