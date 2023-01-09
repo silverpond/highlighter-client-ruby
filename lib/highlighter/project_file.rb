@@ -78,6 +78,11 @@ module Highlighter
                   }
                   value
                   relatedEntityId
+                  relatedEntity {
+                    name
+                    externalId
+                    externalIdType
+                  }
                 }
               }
             }

@@ -49,7 +49,14 @@ module Highlighter
           case eavt.entity_attribute_value_type
           when 'entity'
             if @entities[eavt.related_entity_id].nil?
-              entity.fields[eavt.entity_attribute_name] = eavt.related_entity_id
+              related_entity = Entity.new(
+                id: eavt.related_entity_id,
+                name: eavt.related_entity_name,
+                object_class_name: '',
+                external_id: eavt.related_entity_external_id,
+                external_id_type: eavt.related_entity_external_id_type,
+              )
+              entity.fields[eavt.entity_attribute_name] = related_entity
             else
               entity.fields[eavt.entity_attribute_name] = @entities[eavt.related_entity_id]
             end
@@ -97,6 +104,9 @@ module Highlighter
                       entity_attribute_enum_value: d.dig('entityAttributeEnum', 'value'),
                       entity_attribute_enum_title: d.dig('entityAttributeEnum', 'title'),
                       related_entity_id: d.dig('relatedEntityId'),
+                      related_entity_name: d.dig('relatedEntity', 'name'),
+                      related_entity_external_id: d.dig('relatedEntity', 'externalId'),
+                      related_entity_external_id_type: d.dig('relatedEntity', 'externalIdType'),
                       value: d.dig('value'))
 
           end
@@ -138,7 +148,8 @@ module Highlighter
       attr_accessor :id, :occurred_at, :entity_id, :entity_name, :entity_external_id, :entity_external_id_type,
         :entity_attribute_id, :entity_attribute_name, :entity_attribute_value_type,
         :entity_attribute_enum_id, :entity_attribute_enum_value, :entity_attribute_enum_title,
-        :related_entity_id, :value
+        :related_entity_id, :related_entity_name, :related_entity_external_id, :related_entity_external_id_type,
+        :value
 
       def initialize(id:, occurred_at:, entity_id:, entity_name:, entity_external_id:, entity_external_id_type:,
                     entity_attribute_id:, entity_attribute_name:, entity_attribute_value_type:,
