@@ -154,7 +154,8 @@ module Highlighter
       def initialize(id:, occurred_at:, entity_id:, entity_name:, entity_external_id:, entity_external_id_type:,
                     entity_attribute_id:, entity_attribute_name:, entity_attribute_value_type:,
                     entity_attribute_enum_id:, entity_attribute_enum_value:, entity_attribute_enum_title:,
-                    related_entity_id:, value:)
+                    related_entity_id:, related_entity_name:, related_entity_external_id:, related_entity_external_id_type:,
+                    value:)
         @id = id
         @occurred_at = Time.parse(occurred_at) if !occurred_at.nil?
         @entity_id = entity_id
@@ -168,6 +169,9 @@ module Highlighter
         @entity_attribute_enum_value = entity_attribute_enum_value
         @entity_attribute_enum_title = entity_attribute_enum_title
         @related_entity_id = related_entity_id
+        @related_entity_name = related_entity_name
+        @related_entity_external_id = related_entity_external_id
+        @related_entity_external_id_type = related_entity_external_id_type
         @value = value
       end
 
