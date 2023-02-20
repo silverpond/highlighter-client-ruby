@@ -17,6 +17,44 @@ module Highlighter
         @latest_submission = latest_submission
       end
 
+      def self.where(image_id:, project_id:, project_order_id:)
+        query_string = <<-GRAPHQL
+        query {
+          projectImages(imageId: #{image_id}, projectId: #{project_id}, projectOrderId: "#{project_order_id}") {
+            id
+            projectId
+            imageId
+            projectOrderId
+            state
+            completedAt
+            createdAt
+            updatedAt
+          }
+        }
+        GRAPHQL
+        result = HTTParty.post("#{Highlighter::Client.host_and_port}/graphql",
+                     body: { query: query_string, variables: nil }.to_json,
+                     timeout: Highlighter::Client.http_timeout,
+                     headers: { 'content-type': 'application/json',
+                                 'Authorization': "Token #{Highlighter::Client.api_token}" })
+        if result.success?
+          project_images = result['data']['projectImages'].map do |project_image|
+            new(id: project_image.dig('id'),
+                file_id: project_image.dig('imageId'),
+                project_id: project_image.dig('projectId'),
+                project_order_id: project_image.dig('projectOrderId'),
+                state: project_image.dig('state'),
+                completed_at: project_image.dig('completedAt'),
+                created_at: project_image.dig('createdAt'),
+                updated_at: project_image.dig('updatedAt'),
+                latest_submission_json: nil,
+                latest_submission: nil)
+          end
+        else
+          raise "Error searching for project files in Highlighter - #{result.code}"
+        end
+      end
+
       def self.find(id:)
         query_string = <<-GRAPHQL
         query {
