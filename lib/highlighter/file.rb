@@ -18,14 +18,7 @@ module Highlighter
               presignedUrl(
                 filename: "#{filename}"
               ) {
-                  fields {
-                    key,
-                    policy,
-                    xAmzCredential,
-                    xAmzDate,
-                    xAmzAlgorithm,
-                    xAmzSignature,
-                  },
+                  fields,
                   key,
                   storage,
                   url
@@ -46,7 +39,6 @@ module Highlighter
         raise "Error getting presigned url from Highlighter - #{presigned_url.code}" unless presigned_url.success?
 
         fields = presigned_url['data']['presignedUrl']['fields']
-        fields = fields.transform_keys { |key| key.underscore.dasherize }
         fields['file'] = file
 
         url = presigned_url['data']['presignedUrl']['url']
